@@ -68,20 +68,12 @@
       font-size: 0.9em;
       color: #666;
     }
-
-    .label {
-      font-size: 0.9em;
-      color: #555;
-      font-weight: bold;
-      grid-column: span 2;
-      margin-bottom: 0.2em;
-    }
   </style>
 </head>
 <body>
-  <h1>夜の寄り道カフェ 空席状況</h1>
+  <h1>座席配置と空席状況</h1>
 
-  <!-- 🔍 判例（Legend） -->
+  <!-- 🟢🔴 判例 -->
   <div class="legend">
     <span class="available-color"></span> 空席　
     <span class="occupied-color"></span> 使用中
@@ -98,14 +90,10 @@
     <!-- 空行 -->
     <div></div><div></div><div></div><div></div><div></div><div></div><div></div>
 
-    <!-- ラベル -->
-    <div class="label">テーブルB</div><div></div><div></div><div class="label">テーブルC</div><div></div><div></div>
-
-    <!-- Bテーブル：左2列 -->
+    <!-- B・C列 -->
     <div class="seat" id="B1">B1</div>
     <div class="seat" id="B2">B2</div>
     <div></div>
-    <!-- Cテーブル：右2列 -->
     <div class="seat" id="C1">C1</div>
     <div class="seat" id="C2">C2</div>
     <div></div><div></div>
