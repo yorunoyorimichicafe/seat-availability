@@ -4,18 +4,66 @@
   <meta charset="UTF-8">
   <title>空席情報</title>
   <style>
-    body { font-family: sans-serif; margin: 2em; }
-    h1 { color: #333; }
-    .seat-list { list-style: none; padding: 0; }
-    .seat-item { padding: 8px; margin: 5px 0; border-radius: 6px; width: fit-content; }
+    body { font-family: sans-serif; margin: 2em; background: #f9f9f9; }
+    h1 { color: #333; margin-bottom: 1em; }
+
+    .seating-area { display: grid; grid-template-columns: repeat(5, 80px); grid-gap: 10px; justify-content: start; margin-bottom: 2em; }
+
+    .seat {
+      border: 2px solid #999;
+      border-radius: 6px;
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+    }
+
     .available { background-color: #d4f4dd; color: #2e7d32; }
     .occupied  { background-color: #f8d7da; color: #c62828; }
-    .timestamp { font-size: 0.9em; color: #666; margin-top: 20px; }
+
+    .table-label {
+      font-size: 0.9em;
+      color: #555;
+      margin-bottom: 0.2em;
+      grid-column: span 2;
+    }
+
+    .row { display: contents; }
+
+    .timestamp {
+      font-size: 0.9em;
+      color: #666;
+    }
   </style>
 </head>
 <body>
-  <h1>現在の空席情報</h1>
-  <ul class="seat-list" id="seat-list"></ul>
+  <h1>座席配置と空席状況</h1>
+
+  <div class="seating-area" id="seat-map">
+    <!-- A列 -->
+    <div class="seat" id="A1">A1</div>
+    <div class="seat" id="A2">A2</div>
+    <div class="seat" id="A3">A3</div>
+
+    <!-- 空行 -->
+    <div></div><div></div><div></div><div></div><div></div>
+
+    <!-- テーブルラベル -->
+    <div class="table-label">テーブルB</div><div></div><div></div><div class="table-label">テーブルC</div>
+
+    <!-- B1-B4 / C1-C4 -->
+    <div class="seat" id="B1">B1</div>
+    <div class="seat" id="B2">B2</div>
+    <div></div>
+    <div class="seat" id="C1">C1</div>
+    <div class="seat" id="C2">C2</div>
+
+    <div class="seat" id="B3">B3</div>
+    <div class="seat" id="B4">B4</div>
+    <div></div>
+    <div class="seat" id="C3">C3</div>
+    <div class="seat" id="C4">C4</div>
+  </div>
+
   <div class="timestamp" id="timestamp">読み込み中...</div>
 
   <script>
@@ -26,24 +74,23 @@
         const response = await fetch(endpoint);
         const data = await response.json();
 
-        const seatList = document.getElementById("seat-list");
-        seatList.innerHTML = "";
-
         let latestTimestamp = null;
 
         for (const seatId in data) {
-          const seat = data[seatId];
-          const li = document.createElement("li");
-          li.textContent = `${seatId}: ${seat.status}`;
-          li.className = `seat-item ${seat.status}`;
-          seatList.appendChild(li);
+          const status = data[seatId].status;
+          const seatEl = document.getElementById(seatId);
+          if (seatEl) {
+            seatEl.classList.remove("available", "occupied");
+            seatEl.classList.add(status);
+          }
 
-          if (!latestTimestamp || seat.updated_at > latestTimestamp) {
-            latestTimestamp = seat.updated_at;
+          if (!latestTimestamp || data[seatId].updated_at > latestTimestamp) {
+            latestTimestamp = data[seatId].updated_at;
           }
         }
 
-        document.getElementById("timestamp").textContent = `最終更新: ${new Date(latestTimestamp).toLocaleString()}`;
+        document.getElementById("timestamp").textContent =
+          `最終更新: ${new Date(latestTimestamp).toLocaleString()}`;
       } catch (e) {
         document.getElementById("timestamp").textContent = "データ取得に失敗しました";
         console.error(e);
@@ -51,7 +98,7 @@
     }
 
     fetchSeatData();
-    setInterval(fetchSeatData, 5000); // 5秒ごとに自動更新
+    setInterval(fetchSeatData, 5000);
   </script>
 </body>
 </html>
