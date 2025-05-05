@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>空席情報</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    h1 { color: #333; }
+    .seat-list { list-style: none; padding: 0; }
+    .seat-item { padding: 8px; margin: 5px 0; border-radius: 6px; width: fit-content; }
+    .available { background-color: #d4f4dd; color: #2e7d32; }
+    .occupied  { background-color: #f8d7da; color: #c62828; }
+    .timestamp { font-size: 0.9em; color: #666; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>現在の空席情報</h1>
+  <ul class="seat-list" id="seat-list"></ul>
+  <div class="timestamp" id="timestamp">読み込み中...</div>
+
+  <script>
+    const endpoint = "https://script.google.com/macros/s/AKfycbzjf-fD7YW5SsM6YgRiprh4gsupregeS8QYaaGOdyFXfJnjLSjZc7ucScGXl-udTj6l7A/exec";
+
+    async function fetchSeatData() {
+      try {
+        const response = await fetch(endpoint);
+        const data = await response.json();
+
+        const seatList = document.getElementById("seat-list");
+        seatList.innerHTML = "";
+
+        let latestTimestamp = null;
+
+        for (const seatId in data) {
+          const seat = data[seatId];
+          const li = document.createElement("li");
+          li.textContent = `${seatId}: ${seat.status}`;
+          li.className = `seat-item ${seat.status}`;
+          seatList.appendChild(li);
+
+          if (!latestTimestamp || seat.updated_at > latestTimestamp) {
+            latestTimestamp = seat.updated_at;
+          }
+        }
+
+        document.getElementById("timestamp").textContent = `最終更新: ${new Date(latestTimestamp).toLocaleString()}`;
+      } catch (e) {
+        document.getElementById("timestamp").textContent = "データ取得に失敗しました";
+        console.error(e);
+      }
+    }
+
+    fetchSeatData();
+    setInterval(fetchSeatData, 5000); // 5秒ごとに自動更新
+  </script>
+</body>
+</html>
