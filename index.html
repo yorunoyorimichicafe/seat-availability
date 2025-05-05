@@ -4,10 +4,47 @@
   <meta charset="UTF-8">
   <title>空席情報</title>
   <style>
-    body { font-family: sans-serif; margin: 2em; background: #f9f9f9; }
-    h1 { color: #333; margin-bottom: 1em; }
+    body {
+      font-family: sans-serif;
+      margin: 2em;
+      background: #f9f9f9;
+    }
 
-    .seating-area { display: grid; grid-template-columns: repeat(5, 80px); grid-gap: 10px; justify-content: start; margin-bottom: 2em; }
+    h1 {
+      color: #333;
+      margin-bottom: 1em;
+    }
+
+    .legend {
+      margin-bottom: 1em;
+    }
+
+    .legend span {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+      vertical-align: middle;
+      border-radius: 4px;
+    }
+
+    .available-color {
+      background-color: #d4f4dd;
+      border: 1px solid #2e7d32;
+    }
+
+    .occupied-color {
+      background-color: #f8d7da;
+      border: 1px solid #c62828;
+    }
+
+    .seating-area {
+      display: grid;
+      grid-template-columns: repeat(7, 80px);
+      grid-gap: 10px;
+      margin-bottom: 2em;
+      justify-content: start;
+    }
 
     .seat {
       border: 2px solid #999;
@@ -17,55 +54,74 @@
       font-weight: bold;
     }
 
-    .available { background-color: #d4f4dd; color: #2e7d32; }
-    .occupied  { background-color: #f8d7da; color: #c62828; }
-
-    .table-label {
-      font-size: 0.9em;
-      color: #555;
-      margin-bottom: 0.2em;
-      grid-column: span 2;
+    .available {
+      background-color: #d4f4dd;
+      color: #2e7d32;
     }
 
-    .row { display: contents; }
+    .occupied {
+      background-color: #f8d7da;
+      color: #c62828;
+    }
 
     .timestamp {
       font-size: 0.9em;
       color: #666;
     }
+
+    .label {
+      font-size: 0.9em;
+      color: #555;
+      font-weight: bold;
+      grid-column: span 2;
+      margin-bottom: 0.2em;
+    }
   </style>
 </head>
 <body>
-  <h1>座席配置と空席状況</h1>
+  <h1>夜の寄り道カフェ 空席状況</h1>
 
+  <!-- 🔍 判例（Legend） -->
+  <div class="legend">
+    <span class="available-color"></span> 空席　
+    <span class="occupied-color"></span> 使用中
+  </div>
+
+  <!-- 💺 座席配置 -->
   <div class="seating-area" id="seat-map">
     <!-- A列 -->
     <div class="seat" id="A1">A1</div>
     <div class="seat" id="A2">A2</div>
     <div class="seat" id="A3">A3</div>
+    <div></div><div></div><div></div><div></div>
 
     <!-- 空行 -->
-    <div></div><div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div><div></div><div></div><div></div>
 
-    <!-- テーブルラベル -->
-    <div class="table-label">テーブルB</div><div></div><div></div><div class="table-label">テーブルC</div>
+    <!-- ラベル -->
+    <div class="label">テーブルB</div><div></div><div></div><div class="label">テーブルC</div><div></div><div></div>
 
-    <!-- B1-B4 / C1-C4 -->
+    <!-- Bテーブル：左2列 -->
     <div class="seat" id="B1">B1</div>
     <div class="seat" id="B2">B2</div>
     <div></div>
+    <!-- Cテーブル：右2列 -->
     <div class="seat" id="C1">C1</div>
     <div class="seat" id="C2">C2</div>
+    <div></div><div></div>
 
     <div class="seat" id="B3">B3</div>
     <div class="seat" id="B4">B4</div>
     <div></div>
     <div class="seat" id="C3">C3</div>
     <div class="seat" id="C4">C4</div>
+    <div></div><div></div>
   </div>
 
+  <!-- ⏱️ 更新時間 -->
   <div class="timestamp" id="timestamp">読み込み中...</div>
 
+  <!-- 🔁 データ取得 -->
   <script>
     const endpoint = "https://script.google.com/macros/s/AKfycbzjf-fD7YW5SsM6YgRiprh4gsupregeS8QYaaGOdyFXfJnjLSjZc7ucScGXl-udTj6l7A/exec";
 
